@@ -1,0 +1,39 @@
+<!doctype html>
+	<html>
+	<head>
+		<title>Inspector GadChat</title>
+		<link rel="stylesheet" href="css/app.css">
+		
+  		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  
+	</head>
+	<body>
+
+		<div class="background-panel indigo"></div>
+
+		<div id="chat-window" class="container z-depth-2 white">
+		
+			<ul id="messages"></ul>
+		
+			<form action="">
+				<div class="row">
+					<div class="col s9 m10">
+						<input id="m" autocomplete="off" />
+					</div>
+					<div class="col s3 m2">
+						<button id="send" class="indigo waves-effect waves-light btn"><i class="material-icons send">send</i></button>
+					</div>
+				</div>
+			</form>
+			
+		</div>
+
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		
+  		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+		<script src="js/app.js"></script>
+	</body>
+</html>

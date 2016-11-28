@@ -1,0 +1,17 @@
+{
+	"name": "inspector-gadchat",
+	"version": "1.0.0",
+	"description": "Yet another random chat project",
+	"main": "index.js",
+	"scripts": 
+	{
+		"start": "node index.js"
+	},
+	"author": "Matteo Giusti",
+	"license": "ISC",
+	"dependencies": 
+	{
+		"express": "^4.10.2",
+		"socket.io": "^1.6.0"
+	}
+}

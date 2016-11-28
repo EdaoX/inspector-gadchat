@@ -1,0 +1,40 @@
+.background-panel {
+	position: fixed;
+	top : 0;
+	left: 0;
+	right: 0;
+
+	height: 80px;
+	z-index: 0;
+}
+
+#chat-window {
+	position: relative;
+	z-index: 1;
+	margin-top: 20px;
+	padding: 20px;
+	box-sizing: border-box;
+	height: calc(100vh - 40px);
+}
+
+#messages {
+	height: calc(100% - 80px);
+	overflow-y: auto;
+}
+
+form {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 0 20px 10px;
+	height: 80px;
+}
+
+form button {
+	
+}
+
+#send {
+	width: 100%;
+}
