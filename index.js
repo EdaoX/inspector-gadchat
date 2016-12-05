@@ -1,7 +1,7 @@
 var express 		  = require('express');
 var app 			  = express();
 var http 			  = require('http').Server(app);
-var sockets           = require('./socket.io/sockets');
+var { sockets }       = require('./socket.io/sockets');
 
 var {chat}            = require('./routes/index');
 
