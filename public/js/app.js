@@ -22,11 +22,18 @@ function sendMessage( msg )
 
 function handleNewMessage( bundle )
 {
-	msg 	 = bundle.message;
-	username = bundle.username;
-	color 	 = bundle.color;
+	msg 	 = bundle.message.body;
+	username = bundle.user.username;
+	color 	 = bundle.user.color;
 	sendNotification(msg);
 	addMessageToList( msg, username, color );
+}
+
+function handleMessageList( messageList ){
+    if(messageList)
+        messageList.forEach(function (message) {
+            addMessageToList(message.body, message.user.username || '---', message.color);
+        });
 }
 
 function sendNotification( msg ){
@@ -49,13 +56,14 @@ function changeColor( color ) {
 $('form').submit(function(){
 	var msg = $msgInput.val().trim()
 	if(msg){
-		socket.emit('chat message', msg);
+		sendMessage(msg);
 		$msgInput.val('');
 	}
 	return false;
 });
 
 socket.on('chat message', handleNewMessage);
+socket.on('messages loaded', handleMessageList);
 
 if (Notification && Notification.permission !== "granted")
     Notification.requestPermission();

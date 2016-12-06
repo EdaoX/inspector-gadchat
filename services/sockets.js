@@ -1,23 +1,75 @@
-var {User, Message} = require('../models/index');
-
-// List of known users
-var users = {};
+var {users, messages} = require('./database');
+var {makeUser}        = require('../models/user');
+var {makeMessage}     = require('../models/message');
 
 var io;
 
 function onChatMessage(msg) {
-    user = users[this.id];
-    var message = new Message(msg, user, user.getColor());
-    user.addMessage(message);
-    io.emit('chat message', message.serialize());
+
+    var socketId = this.id;
+    users.findOne({socketId}, function (error, user) {
+
+        if(user){
+            messages.insert(makeMessage(msg, user), function (error, message) {
+                if(!error){
+                    user.messages.push(message._id);
+                    users.update({_id : user._id}, user, function (error) {
+                        if(!error)
+                            io.emit('chat message', {message, user});
+                        else
+                            console.log(`Error updating user ${user.username} from address ${address}: ${error}`);
+                    });
+                }
+                else {
+                    console.log(`Error saving message "${msg}": ${error}`);
+                }
+            });
+        }
+        else {
+            console.log(`User with id ${socketId} not found!`);
+        }
+
+    });
 }
 
 function onChangeUsername(username){
-    users[this.id].setUsername(username);
+    var socketId = this.id;
+    users.findOne({socketId}, function (error, user) {
+
+        if(user){
+
+            // If user exists, update it's username
+            users.update({_id : user._id}, { $set : { username } }, function (error) {
+                if(error) console.log(`Error updating user ${user.username} from address ${address}: ${error}`);
+            });
+
+        }
+        else {
+            console.log(`User with id ${socketId} not found!`);
+        }
+
+    });
 }
 
 function onChangeColor(color) {
-    users[this.id].setColor(color);
+
+    var socketId = this.id;
+    users.findOne({socketId}, function (error, user) {
+
+        if(user){
+
+            // If user exists, update it's username
+            users.update({_id : user._id}, { $set : { color } }, function (error) {
+                if(error) console.log(`Error updating user ${user.username} from address ${address}: ${error}`);
+            });
+
+        }
+        else {
+            console.log(`User with id ${socketId} not found!`);
+        }
+
+    });
+
 }
 
 function onDisconnection() {
@@ -30,9 +82,46 @@ function onConnection(socket) {
     var address = socket.handshake.address;
 
     // Create the user if it doesn't exist
-    users[socket.id] = users[socket.id] || new User(address);
+    users.findOne({address}, function (err, user) {
+        if(user){
 
-    // io.emit('chat message', '*** Utente Connesso: ' + user.username + ' ***');
+            // If user exists, update it's socket id
+            users.update({_id : user._id}, { $set : { socketId : socket.id } }, function (error) {
+                if(error) console.log(`Error updating user from address ${address}: ${error}`);
+            });
+        }
+        else {
+
+            // If user doesn't exist, insert it
+            users.insert(makeUser(address, socket.id), function (error) {
+                if(error) console.log(`Error saving user from address ${address}: ${error}`);
+            });
+        }
+    });
+
+    //Load up all messages and send them to connected socket for visualization
+    messages.find({}, function (error, messages) {
+
+        Promise.all(messages.map(function (message) {
+            return new Promise(function (resolve, reject) {
+                users.findOne({_id : message.userId}, function (error, user) {
+
+                    if(!error){
+
+                        message.user = user;
+
+                        resolve(message);
+
+                    }
+                    else reject(error);
+
+                });
+            });
+        })).then(function (filledMessages) {
+            socket.emit('messages loaded', filledMessages);
+        });
+
+    });
 
     socket.on('chat message', onChatMessage.bind(socket));
 
@@ -47,7 +136,6 @@ function onConnection(socket) {
 function sockets (server){
 
     io = require('socket.io')(server);
-
 
     // Handle a user connecting to the server
     io.on('connection', onConnection);

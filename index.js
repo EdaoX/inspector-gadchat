@@ -1,18 +1,24 @@
 var express 		  = require('express');
 var app 			  = express();
 var http 			  = require('http').Server(app);
-var { sockets }       = require('./services/sockets');
 
 var {chat}            = require('./routes/index');
+var database          = require('./services/database');
 
 app.use(express.static('public'));
 
 // Setup Routes
 app.get('/', chat);
 
-// Setup Socket Listeners
-sockets(http);
+database.init().then(function () {
 
-http.listen(3000, function(){
-	console.log('listening on *:3000');
+    var { sockets } = require('./services/sockets');
+
+    // Setup Socket Listeners
+    sockets(http);
+
+    http.listen(3000, function(){
+        console.log('listening on *:3000');
+    });
+
 });

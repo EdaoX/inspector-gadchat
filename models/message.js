@@ -1,30 +1,14 @@
-function Message( message, user, color ){
+exports = module.exports = {
 
-	var user 	  = user;
-	var msg 	  = message;
-	var timestamp = new Date();
-	var color 	  = color || '#000000';
+    makeMessage : function (message, user) {
 
-	this.getMessage = function () {
-		return message;
-	}
+        return {
+            body      : message,
+            userId    : user._id,
+            color     : user.color,
+            timestamp : new Date()
+        }
 
-	this.getTimestamp = function() {
-		return new Date(timestamp.getTime());
-	}
+    }
 
-	this.setColor = function ( newColor ) {
-		color = newColor;
-	}
-
-	this.serialize = function(){
-		return {
-			username  : user.getUsername(),
-			color	  : color,
-			message   : message,
-			timestamp : message.toString()
-		}
-	}
-}
-
-exports = module.exports = Message;
+};
