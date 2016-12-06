@@ -1,4 +1,4 @@
-var {User, Message} = require('../models');
+var {User, Message} = require('../models/index');
 
 // List of known users
 var users = {};
