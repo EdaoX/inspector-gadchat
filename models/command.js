@@ -11,28 +11,31 @@ function ArgumentList( args , acceptedArgs ) {
 
     var _args = {};
 
-    acceptedArgs.forEach((matching, key) => {
+    for(var key in acceptedArgs){
+        if(acceptedArgs.hasOwnProperty(key)){
+            matching = acceptedArgs[key];
 
-        var regex = null;
+            var regex = null;
 
-        key = key.trim();
+            key = key.trim();
 
-        // Check if the key is a flag, in which case "matching" is the value to assign in case of presence
-        if(key.match(/^\(.+\)$/))   // E.g: (-y) means "Just check if -y is present, don't take any parameters"
-        {
-            key = key.replace(/^\(|\)$/gm, ''); //Removes surrounding parenthesis
-            regex = new RegExp(`${key}`);
-            _args[key] = regex.exec(args) ? matching : false;
+            // Check if the key is a flag, in which case "matching" is the value to assign in case of presence
+            if(key.match(/^\(.+\)$/))   // E.g: (-y) means "Just check if -y is present, don't take any parameters"
+            {
+                key = key.replace(/^\(|\)$/gm, ''); //Removes surrounding parenthesis
+                regex = new RegExp(`${key}`);
+                _args[key] = regex.exec(args) ? matching : false;
+            }
+            else if (key.match(/^-\w+/)){           //If key begins with -, look it up inside the arguments string along with the match pattern
+                regex = new RegExp(`${key}\s+${matching}`);
+                _args[key] = regex.exec(args) || false;
+            }
+            else {
+                regex = new RegExp(`${matching}`);  //If key doesn't begin with -, only look for the match pattern
+                _args[key] = regex.exec(args) || false;
+            }
         }
-        else if (key.match(/^-\w+/)){           //If key begins with -, look it up inside the arguments string along with the match pattern
-            regex = new RegExp(`${key}\s+${matching}`);
-            _args[key] = regex.exec(args) || false;
-        }
-        else {
-            regex = new RegExp(`${matching}`);  //If key doesn't begin with -, only look for the match pattern
-            _args[key] = regex.exec(args) || false;
-        }
-    });
+    }
 
     this.has = function (arg) {
         return Boolean(_args[arg]);
@@ -52,16 +55,20 @@ var commands = {
     changeUsername: function (args) {
 
         var acceptedArgs = {
-            'username' : /'([\w\s]+)'/,
+            'username' : "'([\\w\\s]+)'",
             '-y'       : true
         };
 
         function exec(args, params) {
+
             if(!params.user || !params.user._id) return false;
             if(!args.has('username'))            return false;
 
+            var username = args.matchesOf('username')[0];
+
             var {changeUsername} = require('./user');
-            changeUsername(params.user._id, args.getValue('username'), args.has('-y'))
+
+            changeUsername(params.user._id, username, args.has('-y'))
         }
 
         return new Command('changeUsername', exec, acceptedArgs, args);
@@ -70,7 +77,7 @@ var commands = {
     changeColor : function (args) {
 
         var acceptedArgs = {
-            'color' : /'(.+)'/
+            'color' : "'(.+)'"
         };
 
         function exec(args, params) {
@@ -91,8 +98,8 @@ exports = module.exports = {
     makeCommand : function (commandString) {
         var fields = /^\/(\w+)\s+(.*)\s*/.exec(commandString);
         if(!fields) return false;
-        var command = fields[0];
-        var args    = fields[1];
+        var command = fields[1];
+        var args    = fields[2];
         return commands[command] ? commands[command](args) : false;
     }
 };
