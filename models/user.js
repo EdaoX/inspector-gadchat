@@ -27,7 +27,11 @@ exports = module.exports = {
                         io.emit('username change', `User '${oldUsername}' changed name to '${newUsername}'`);
 
                     }
+
                 });
+            }
+            else {
+                console.log(`User not found: ${id}`);
             }
 
         });
