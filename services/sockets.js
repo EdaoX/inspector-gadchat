@@ -100,8 +100,7 @@ function onConnection(socket) {
     });
 
     //Load up all messages and send them to connected socket for visualization
-    messages.find({}, function (error, messages) {
-
+    messages.find({}).sort({timestamp : 1}).exec(function(error, messages){
         Promise.all(messages.map(function (message) {
             return new Promise(function (resolve, reject) {
                 users.findOne({_id : message.userId}, function (error, user) {
