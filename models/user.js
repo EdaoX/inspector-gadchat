@@ -24,7 +24,7 @@ exports = module.exports = {
                     if(broadcast && !err && (numReplaced > 0)){
 
                         var {io} = require('../services/sockets');
-                        io.emit('username change', `User '${oldUsername}' changed name to '${newUsername}'`);
+                        io.emit('server message', `User '${oldUsername}' changed name to '${newUsername}'`);
 
                     }
 
