@@ -51,48 +51,47 @@ function ArgumentList( args , acceptedArgs ) {
 
 }
 
-var commands = {
-    changeUsername: function (args) {
+var commands = {};
 
-        var acceptedArgs = {
-            'username' : "'([\\w\\s]+)'",
-            '-y'       : true
-        };
+commands.changeUsername = commands.cu = function (args) {
 
-        function exec(args, params) {
+    var acceptedArgs = {
+        'username' : "'([\\w\\s]+)'",
+        '-y'       : true
+    };
 
-            if(!params.user || !params.user._id) return false;
-            if(!args.has('username'))            return false;
+    function exec(args, params) {
 
-            var username = args.matchesOf('username')[0];
+        if(!params.user || !params.user._id) return false;
+        if(!args.has('username'))            return false;
 
-            var {changeUsername} = require('./user');
+        var username = args.matchesOf('username')[0];
 
-            changeUsername(params.user._id, username, args.has('-y'))
-        }
+        var {changeUsername} = require('./user');
 
-        return new Command('changeUsername', exec, acceptedArgs, args);
-    },
-    cu : this.changeUsername,
-    changeColor : function (args) {
-
-        var acceptedArgs = {
-            'color' : "'(.+)'"
-        };
-
-        function exec(args, params) {
-            if(!params.user || !params.user._id) return false;
-            if(!args.has('color'))               return false;
-
-            var {changeColor} = require('./user');
-            changeColor(params.user._id, args.matchesOf('color')[0]);
-        }
-
-        return new Command('changeColor', exec, acceptedArgs, args);
-
+        changeUsername(params.user._id, username, args.has('-y'))
     }
 
+    return new Command('changeUsername', exec, acceptedArgs, args);
 };
+
+commands.changeColor = function (args) {
+
+    var acceptedArgs = {
+        'color' : "'(.+)'"
+    };
+
+    function exec(args, params) {
+        if(!params.user || !params.user._id) return false;
+        if(!args.has('color'))               return false;
+
+        var {changeColor} = require('./user');
+        changeColor(params.user._id, args.matchesOf('color')[0]);
+    }
+
+    return new Command('changeColor', exec, acceptedArgs, args);
+
+}
 
 exports = module.exports = {
     makeCommand : function (commandString) {
