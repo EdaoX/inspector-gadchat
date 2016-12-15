@@ -1,7 +1,7 @@
-var {users, messages} = require('./database');
-var {makeUser}        = require('../models/user');
-var {makeMessage}     = require('../models/message');
-var {makeCommand}     = require('../models/command');
+var {users, messages}                        = require('./database');
+var {makeUser, changeUsername, changeColor}  = require('../models/user');
+var {makeMessage}                            = require('../models/message');
+var {makeCommand}                            = require('../models/command');
 
 var io;
 
@@ -51,12 +51,7 @@ function onChangeUsername(username){
     users.findOne({socketId}, function (error, user) {
 
         if(user){
-
-            // If user exists, update it's username
-            users.update({_id : user._id}, { $set : { username } }, function (error) {
-                if(error) console.log(`Error updating user ${user.username} from address ${address}: ${error}`);
-            });
-
+            changeUsername(user._id, username);
         }
         else {
             console.log(`User with id ${socketId} not found!`);
@@ -72,10 +67,7 @@ function onChangeColor(color) {
 
         if(user){
 
-            // If user exists, update it's username
-            users.update({_id : user._id}, { $set : { color } }, function (error) {
-                if(error) console.log(`Error updating user ${user.username} from address ${address}: ${error}`);
-            });
+            changeColor(user._id, color);
 
         }
         else {
