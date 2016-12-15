@@ -85,7 +85,7 @@ var commands = {
             if(!args.has('color'))               return false;
 
             var {changeColor} = require('./user');
-            changeColor(params.user._id, args.getValue('color'));
+            changeColor(params.user._id, args.matchesOf('color')[0]);
         }
 
         return new Command('changeColor', exec, acceptedArgs, args);
