@@ -23,7 +23,7 @@ function ArgumentList( args , acceptedArgs ) {
             if(key.match(/^\(.+\)$/))   // E.g: (-y) means "Just check if -y is present, don't take any parameters"
             {
                 key = key.replace(/^\(|\)$/gm, ''); //Removes surrounding parenthesis
-                regex = new RegExp(`${key}`);
+                regex = new RegExp(key);
                 _args[key] = regex.exec(args) ? matching : false;
             }
             else if (key.match(/^-\w+/)){           //If key begins with -, look it up inside the arguments string along with the match pattern
@@ -57,7 +57,7 @@ commands.changeUsername = commands.cu = function (args) {
 
     var acceptedArgs = {
         'username' : "'([\\w\\s]+)'",
-        '-y'       : true
+        '(-y)'       : true
     };
 
     function exec(args, params) {
