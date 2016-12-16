@@ -29,6 +29,10 @@ function handleNewMessage( bundle )
 	addMessageToList( msg, username, color );
 }
 
+function handleNewServerMessage( msg ) {
+	addMessageToList(msg, 'Server', '#81d944');
+}
+
 function handleMessageList( messageList ){
     if(messageList)
         messageList.forEach(function (message) {
@@ -64,6 +68,7 @@ $('form').submit(function(){
 
 socket.on('chat message', handleNewMessage);
 socket.on('messages loaded', handleMessageList);
+socket.on('server message', handleNewServerMessage)
 
 if (Notification && Notification.permission !== "granted")
     Notification.requestPermission();
