@@ -33,6 +33,14 @@ function handleNewServerMessage( msg ) {
 	addMessageToList(msg, 'Server', '#81d944');
 }
 
+function handleNewSpeechMessage( msg ) {
+	if(SpeechSynthesisUtterance){
+		var smsg = new SpeechSynthesisUtterance(msg);
+		smsg.lang = 'it-IT';
+		window.speechSynthesis.speak(smsg);
+	}	
+}
+
 function handleMessageList( messageList ){
     if(messageList)
         messageList.forEach(function (message) {
@@ -68,7 +76,8 @@ $('form').submit(function(){
 
 socket.on('chat message', handleNewMessage);
 socket.on('messages loaded', handleMessageList);
-socket.on('server message', handleNewServerMessage)
+socket.on('server message', handleNewServerMessage);
+socket.on('speech message', handleNewSpeechMessage);
 
 if (Notification && Notification.permission !== "granted")
     Notification.requestPermission();
