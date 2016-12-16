@@ -31,7 +31,7 @@ function ArgumentList( args , acceptedArgs ) {
                 _args[key] = regex.exec(args) || false;
             }
             else {
-                regex = new RegExp(`${matching}`);  //If key doesn't begin with -, only look for the match pattern
+                regex = new RegExp(matching);  //If key doesn't begin with -, only look for the match pattern
                 _args[key] = regex.exec(args) || false;
             }
         }
@@ -57,7 +57,7 @@ commands.changeUsername = commands.cu = function (args) {
 
     var acceptedArgs = {
         'username' : "'([\\w\\s]+)'",
-        '(-y)'       : true
+        '(-y)'     : true
     };
 
     function exec(args, params) {
@@ -69,11 +69,27 @@ commands.changeUsername = commands.cu = function (args) {
 
         var {changeUsername} = require('./user');
 
-        changeUsername(params.user._id, username, args.has('-y'))
+        changeUsername(params.user._id, username, args.has('-y'));
     }
 
     return new Command('changeUsername', exec, acceptedArgs, args);
 };
+
+commands.speak = commands.s = function(args) {
+    var acceptedArgs = {
+        'message' : "'(.+)'"
+    };
+
+    function exec(args, params) {
+        if(args.has('message')){
+            var {makeSpokenMessage} = require('./message');
+            var {io} = require('../services/sockets');
+            io.emit('speech message', makeSpokenMessage(args.matchesOf('message')[0]));
+        }
+    }
+
+    return new Command('speak', exec, acceptedArgs, args);
+}
 
 commands.changeColor = function (args) {
 

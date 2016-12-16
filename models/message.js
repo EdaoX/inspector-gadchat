@@ -9,6 +9,11 @@ exports = module.exports = {
             timestamp : new Date()
         }
 
+    },
+
+    makeSpokenMessage : function ( message ){
+    	if(message.length > 100) message = message.substring(0, 100);
+    	return message;	//TODO - Better implementation
     }
 
 };
