@@ -66,7 +66,7 @@ function changeColor( color ) {
 }
 
 $('form').submit(function(){
-	var msg = $msgInput.val().trim()
+	var msg = $msgInput.val();
 	if(msg){
 		sendMessage(msg);
 		$msgInput.val('');
